@@ -1,4 +1,3 @@
-
 plugins {
     id("com.android.application")
     
@@ -46,4 +45,5 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.material:material:1.9.0")
     //implementation("com.github.lukaspili:AudioWaveform:1.0.1")
+implementation("com.github.wendykierp:JTransforms:3.1")
 }
