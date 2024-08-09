@@ -1,20 +1,29 @@
-<!-- res/layout/activity_audio_visualization.xml -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_height="match_parent"
+     android:layout_width="match_parent"
+     android:padding="16dp">
 
     <com.dypho.audiovisualization.WaveformView
-        android:id="@+id/waveformView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_centerInParent="true"
-        android:background="#FFFFFF" />
-     <TextView
-    android:id="@+id/frequencyTextView"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Frequency: 0 Hz"
-    android:layout_below="@id/waveformView" />
+         android:layout_height="200dp"
+         android:layout_width="match_parent"
+         android:layout_centerInParent="true"
+         android:background="#FFFFFF"
+         android:id="@+id/waveformView" />
+
+    <TextView
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_below="@id/waveformView"
+         android:id="@+id/frequencyTextView"
+         android:text="Frequency: 0 Hz" />
+
+    <TextView
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content"
+         android:layout_below="@id/frequencyTextView"
+         android:id="@+id/loudnessTextView"
+         android:text="Loudness:   0 dB" />
 
 </RelativeLayout>
