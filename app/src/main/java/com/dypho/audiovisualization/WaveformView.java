@@ -124,7 +124,7 @@ if (loudnessHistory != null) {
         Arrays.sort(lastFive);
         float medianLoudness = (float) lastFive[(lastN - 1) / 2]; // 获取最新五个数据中位数
 
-        float y = height - (medianLoudness / 160f) * height; // 假设响度范围在0-160
+        float y = height - (medianLoudness / 100f) * height; // 假设响度范围在0-160
         if (lastX != -1) {
             canvas.drawLine(lastX, lastY, x, y, paintLoudness);
         }
@@ -140,8 +140,8 @@ if (loudnessHistory != null) {
     int height = getHeight();
 
     // 计算参考线的y坐标，从视图底部向上
-    float y1 = height - (height * (133-33) / frearea);
-    float y2 = height - (height * (189-49) / frearea);//不知道为什么算出来的频率和实际的不一样。只能先这样修正一下。
+    float y1 = height - (height * (133) / frearea);
+    float y2 = height - (height * (189) / frearea);//不知道为什么算出来的频率和实际的不一样。只能先这样修正一下。
 
     // 绘制第一条参考线
     canvas.drawLine(0, y1, width, y1, referenceLinePaint);
