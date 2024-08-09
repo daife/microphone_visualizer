@@ -10,12 +10,14 @@ import java.util.Arrays;
 public class WaveformView extends View {
 
     private short[] buffer = new short[1024];
-    private double[] frequencyHistory = new double[500]; // 假设我们存储5秒的历史记录
+    private double[] frequencyHistory = new double[200]; // 频率曲线，假设我们存储5秒的历史记录
+    private double[] loudnessHistory = new double[200]; // 存储响度历史记录
     private int historyIndex = 0;
     private Paint paintWaveform = new Paint();
     private Paint paintFrequency = new Paint();
     private Paint referenceLinePaint = new Paint();
-    private int lastN = 7;//去噪声中位数数目，只能是奇数
+    private Paint paintLoudness = new Paint(); // 响度曲线画笔
+    private int lastN = 5;//去噪声中位数数目，只能是奇数
     public WaveformView(Context context) {
         super(context);
         init();
@@ -32,24 +34,33 @@ public class WaveformView extends View {
     }
 
     private void init() {
-        paintWaveform.setColor(0xFF0000FF); // 设置波形画笔颜色
-        paintWaveform.setStrokeWidth(2f); // 设置波形画笔宽度
+       // paintWaveform.setColor(0xFF0000FF); // 设置波形画笔颜色
+      //  paintWaveform.setStrokeWidth(2f); // 设置波形画笔宽度
 
         paintFrequency.setColor(0xFFFF0000); // 设置频率曲线画笔颜色
         paintFrequency.setStrokeWidth(2f); // 设置频率曲线画笔宽度
         
         referenceLinePaint.setColor(0xFF00FF00); // 设置参考线画笔颜色
         referenceLinePaint.setStrokeWidth(2f); // 设置参考线画笔宽度
+        
+        
+                paintLoudness.setColor(0xFF0000FF); // 设置响度曲线画笔颜色
+        paintLoudness.setStrokeWidth(2f); // 设置响度曲线画笔宽度
     }
 
-    public void updateWaveform(short[] buffer) {
+   /* public void updateWaveform(short[] buffer) {
         this.buffer = buffer;
         invalidate(); // 请求重绘视图
-    }
+    }*/
 
     public void updateFrequencyHistory(double frequency) {
         frequencyHistory[historyIndex] = frequency;
         historyIndex = (historyIndex + 1) % frequencyHistory.length;
+        invalidate(); // 请求重绘视图
+    }
+    public void updateLoudnessHistory(double loudness) {
+        loudnessHistory[historyIndex] = loudness;
+        historyIndex = (historyIndex + 1) % loudnessHistory.length;
         invalidate(); // 请求重绘视图
     }
 
@@ -61,20 +72,20 @@ public class WaveformView extends View {
         float centerY = height / 2f;
 
         // 绘制波形
-        if (buffer != null) {
+     /*   if (buffer != null) {
             // ... (省略波形绘制代码)
             float lastX = -1;
             float lastY = -1;
             for (int i = 0; i < buffer.length; i++) {
                 float x = width * i / (buffer.length - 1);
-                float y = centerY - (buffer[i] / 32768f) * (height / 2f);
+                float y = centerY - (buffer[i] / 32768f) * (height / 2f);//2f可以改成1f，敏感度更高
                 if (lastX != -1) {
                     canvas.drawLine(lastX, lastY, x, y, paintWaveform);
                 }
                 lastX = x;
                 lastY = y;
         }
-            }
+            }*/
 
         // 绘制频率曲线
         if (frequencyHistory != null) {
@@ -98,7 +109,28 @@ public class WaveformView extends View {
                 lastY = y;
             }
         }
+        // 绘制响度曲线
+if (loudnessHistory != null) {
+    float lastX = -1;
+    float lastY = -1;
+    for (int i = 0; i < loudnessHistory.length - lastN + 1; i++) {
+        float x = width * i / (loudnessHistory.length - 1);
+        double[] lastFive = new double[lastN];
+        for (int j = 0; j < lastN; j++) {
+            int index = (historyIndex + j + i) % loudnessHistory.length;
+            lastFive[j] = loudnessHistory[index];
+        }
+        Arrays.sort(lastFive);
+        float medianLoudness = (float) lastFive[(lastN - 1) / 2]; // 获取最新五个数据中位数
 
+        float y = height - (medianLoudness / 100f) * height; // 假设响度范围在0-100
+        if (lastX != -1) {
+            canvas.drawLine(lastX, lastY, x, y, paintLoudness);
+        }
+        lastX = x;
+        lastY = y;
+    }
+}
         // 绘制参考频率线
         drawReferenceLines(canvas);
     }
