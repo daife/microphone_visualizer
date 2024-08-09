@@ -171,7 +171,7 @@ private void processAudioData(ShortBufferTask task) {
     }
 
     // 将最大幅度的索引转换为频率
-    double frequency = maxIndex * (SAMPLE_RATE / FFT_SIZE);
+    double frequency = maxIndex * (SAMPLE_RATE / FFT_SIZE)*1.351-1.82;//后来发现和实际频率成线性关系，拟合了一下，应该差不多了
     /*不知道为什么计算出来的频率比实际的要小几十,试过了两种不同的依赖包结果都是一样的*/
     // 更新UI
     uiHandler.post(() -> {
@@ -212,6 +212,6 @@ private void processAudioData(ShortBufferTask task) {
         }
         double rms = Math.sqrt(sumOfSquares / audioData.length);
         // 转换为分贝
-        return 20 * Math.log10(rms) + 90.0; // 加上一个常数以获得正数
+        return 20 * Math.log10(rms) + 58.0; // 加上一个常数以获得正数
     }
 }
