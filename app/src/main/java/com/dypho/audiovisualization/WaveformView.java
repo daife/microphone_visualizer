@@ -9,15 +9,16 @@ import java.util.Arrays;
 
 public class WaveformView extends View {
 
-    private short[] buffer = new short[1024];
-    private double[] frequencyHistory = new double[200]; // 频率曲线，假设我们存储5秒的历史记录
-    private double[] loudnessHistory = new double[200]; // 存储响度历史记录
+    //private short[] buffer = new short[1024];
+    private double[] frequencyHistory = new double[120]; // 同一时刻能显示在历史数据数量多少
+    private double[] loudnessHistory = new double[120]; // 
     private int historyIndex = 0;
     private Paint paintWaveform = new Paint();
     private Paint paintFrequency = new Paint();
     private Paint referenceLinePaint = new Paint();
     private Paint paintLoudness = new Paint(); // 响度曲线画笔
-    private int lastN = 5;//去噪声中位数数目，只能是奇数
+    private int lastN = 3;//去噪声中位数数目，只能是奇数
+    private float frearea = 200f;//频率范围
     public WaveformView(Context context) {
         super(context);
         init();
@@ -101,7 +102,7 @@ public class WaveformView extends View {
                  Arrays.sort(lastFive);
                 float medianFre = (float) lastFive[(lastN-1)/2];//获取最新五个数据中位数
                 
-                float y = height - (medianFre / 200f) * height; // 假设频率范围在200Hz
+                float y = height - (medianFre / frearea) * height; // 假设频率范围在200Hz
                 if (lastX != -1) {
                     canvas.drawLine(lastX, lastY, x, y, paintFrequency);
                 }
@@ -123,7 +124,7 @@ if (loudnessHistory != null) {
         Arrays.sort(lastFive);
         float medianLoudness = (float) lastFive[(lastN - 1) / 2]; // 获取最新五个数据中位数
 
-        float y = height - (medianLoudness / 100f) * height; // 假设响度范围在0-100
+        float y = height - (medianLoudness / 160f) * height; // 假设响度范围在0-160
         if (lastX != -1) {
             canvas.drawLine(lastX, lastY, x, y, paintLoudness);
         }
@@ -139,8 +140,8 @@ if (loudnessHistory != null) {
     int height = getHeight();
 
     // 计算参考线的y坐标，从视图底部向上
-    float y1 = height - (height * 133 / 200f);
-    float y2 = height - (height * 189 / 200f);
+    float y1 = height - (height * (133-33) / frearea);
+    float y2 = height - (height * (189-49) / frearea);//不知道为什么算出来的频率和实际的不一样。只能先这样修正一下。
 
     // 绘制第一条参考线
     canvas.drawLine(0, y1, width, y1, referenceLinePaint);
